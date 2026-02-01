@@ -1,5 +1,5 @@
 import unittest
-from weight-normalizer import parse_weight_to_lbs, parse_weight_safe
+from weight_normalizer import parse_weight_to_lbs, parse_weight_safe
 
 class TestGoogleWeightNormalizer(unittest.TestCase):
 
