@@ -105,6 +105,3 @@ print(weight_lib.parse_weight_to_lbs("70kg"))
 
 MIT License. Built for production use in healthcare informatics and clinical research.
 
-```
-
-```
