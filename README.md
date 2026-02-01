@@ -12,140 +12,57 @@ In healthcare and clinical research, patient data arrives in numerous formats ac
 * **International Support:** Handles localized units including Jin (China), Kan (Japan), and Arroba (Latin America).
 * **Messy Input:** Handles common misspellings, typos, and informal notations.
 
-## Features
-
-### 1. Comprehensive Unit Support
-
-| Unit Category | Supported Formats | Examples |
-| :--- | :--- | :--- |
-| **Kilograms** | kg, kgs, kilogram, kilo, 斤 (Chinese jin) | 70kg, 70 kilos, 70.5 kilo grams |
-| **Pounds** | lb, lbs, pound | 150 lbs, 150 pounds, 150 |
-| **Stones** | st, stone (with composite format) | 11st, 11 stone 6, 11-6, 12 stones |
-| **Jin/Catty** | jin, catty, 斤 | 120 jin, 120斤, 100 catty |
-| **Kan** | kan, 貫 | 10 kan, 10貫 |
-| **Arroba** | arroba, @ | 2 arroba, 1@ |
-| **Height** | cm, m, ft, in, composite | 180cm, 1.8m, 5'11", 5.5 ft |
-
-### 2. Robust Parsing Logic
-
-* **Misspelling tolerance:** Handles "killograms", "pount", "stonnes".
-* **Prefix handling:** Strips noise like "weighs 70kg", "about 150 lbs", "~70 kilos", "Height: 5'9".
-* **Case insensitive:** "70KG", "70kg", "70Kg" all work.
-* **Flexible spacing:** "70kg", "70 kg", "70  kilograms".
-* **Decimal support:** Handles "70.5kg", "11.5 stone", "5.5 ft".
-
-### 3. Data Quality & Safety
-
-* **Validation:** Rejects negative values and unreasonable extremes.
-* **Error handling:** Clear ValueError messages for invalid inputs.
-* **Safe mode:** Optional wrappers that return None instead of raising exceptions for batch processing.
-* **Precision:** Uses international standard conversion factors.
-
 ## Project Structure
 
-* `weight_normalizer.py`: Main library for weight logic (Classes & Regex).
-* `height_normalizer.py`: Main library for height logic & heuristics.
-* `make-test.py`: Unified edge case test runner (The Gauntlet).
-* `make-run.py`: Interactive CLI for terminal usage.
+All files are located in the root directory for ease of access and robust importing.
+
+* `weight-normalizer.py`: Main library logic for weight conversion.
+* `height-normalizer.py`: Main library logic for height conversion.
+* `make-run.py`: Interactive CLI tool for manual data entry.
+* `make-test.py`: Unified test suite for verifying logic.
 * `README.md`: Documentation.
-
-## Installation
-
-No external dependencies required - uses only the Python standard library.
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd clinical-normalizer
-
-```
 
 ## Quick Start
 
-### Interactive CLI
-
-To test the normalizer with manual input in your terminal:
+### 1. Interactive Mode
+To manually input patient data and see the conversion results in your terminal:
 
 ```bash
 python make-run.py
 
 ```
 
-### Library Usage: Weight Normalization
+### 2. Running Tests
 
-Normalizes inputs to **US Pounds (lbs)**.
-
-```python
-from weight_normalizer import parse_weight_to_lbs
-
-# Simple conversions
-print(parse_weight_to_lbs("70kg"))          # Returns 154.32
-print(parse_weight_to_lbs("11 stone 6"))    # Returns 160.0 (Composite)
-print(parse_weight_to_lbs("120斤"))         # Returns 132.28 (International)
-
-# Handles messy input
-print(parse_weight_to_lbs("weighs about 70 kilos")) # Returns 154.32
-
-```
-
-### Library Usage: Height Normalization
-
-Normalizes inputs to a tuple of **(Feet, Inches)**.
-
-```python
-from height_normalizer import parse_height_to_us, format_height
-
-# The "Decimal Trap" Handling
-# 5.5 ft is mathematically 5 feet and 6 inches (0.5 * 12)
-print(parse_height_to_us("5.5 ft"))         # Returns (5, 6.0)
-
-# Composite Handling
-print(parse_height_to_us("5' 11\""))        # Returns (5, 11.0)
-
-# Unitless Heuristics (Inferred based on human physiology)
-print(parse_height_to_us("180"))            # Returns (5, 10.87) (Inferred CM)
-print(parse_height_to_us("1.8"))            # Returns (5, 10.87) (Inferred Meters)
-
-# Formatting Output
-ft, ins = parse_height_to_us("180cm")
-print(format_height(ft, ins))               # Returns "5' 10.87""
-
-```
-
-### Safe Mode (Batch Processing)
-
-Use `_safe` functions for ETL pipelines where you want to skip errors rather than crash.
-
-```python
-from weight_normalizer import parse_weight_safe
-
-# Returns None instead of raising ValueError
-result = parse_weight_safe("invalid data")  # Returns None
-result = parse_weight_safe("70kg")          # Returns 154.32
-
-```
-
-## Testing
-
-The project maintains a comprehensive test suite covering edge cases, international units, and common data entry errors.
+To run the full battery of edge-case tests (The "Gauntlet") to verify the logic:
 
 ```bash
-# Run the full edge-case gauntlet for both Height and Weight
 python make-test.py
-
-# Run specific module tests
-python -m unittest weight_normalizer.py
-python -m unittest height_normalizer.py
 
 ```
 
-**Test Coverage Highlights:**
+## Features and Supported Units
 
-* **Weight:** "11st 6lb" (Composite), "100斤" (Unicode), "70 killograms" (Typos).
-* **Height:** "5.9 ft" vs "5'9"", "180" (Unitless CM), "72 inches".
-* **Safety:** Negative numbers, zero values, and unreasonable extremes.
+### Weight Support
 
-## Implementation Details
+| Unit Category | Supported Formats | Examples |
+| --- | --- | --- |
+| **Kilograms** | kg, kgs, kilogram, kilo, 斤 (Chinese jin) | 70kg, 70 kilos, 70.5 kilo grams |
+| **Pounds** | lb, lbs, pound | 150 lbs, 150 pounds, 150 |
+| **Stones** | st, stone (with composite format) | 11st, 11 stone 6, 11-6, 12 stones |
+| **Jin/Catty** | jin, catty, 斤 | 120 jin, 120斤, 100 catty |
+| **Kan** | kan, 貫 | 10 kan, 10貫 |
+| **Arroba** | arroba, @ | 2 arroba, 1@ |
+
+### Height Support
+
+| Unit Category | Supported Formats | Examples |
+| --- | --- | --- |
+| **Metric** | cm, m, meter | 180cm, 1.8m, 1.75 meters |
+| **Imperial** | ft, in, feet, inches | 5'11", 5ft 10, 70 inches |
+| **Decimal** | ft (mathematical) | 5.5 ft (Calculated as 5' 6") |
+
+## Engineering Logic
 
 ### Height Logic: The "Decimal Trap"
 
@@ -160,41 +77,33 @@ Height data is notoriously difficult due to the ambiguity of decimal notation. T
 
 Weight parsing uses a Token Normalization Map for O(1) unit lookups, followed by a multi-stage parser.
 
-1. **Sanitization:** Remove prefixes and noise.
-2. **Composite Check:** Look for "Stone + Pounds" pattern first.
-3. **General Parse:** Extract number and unit string.
-4. **Normalization:** Map unit string (e.g., "kgs", "kilo") to canonical factor.
+1. **Sanitization:** Remove prefixes ("weighs", "about") and noise.
+2. **Composite Check:** Look for "Stone + Pounds" pattern first to avoid partial matches.
+3. **General Parse:** Extract number and unit string using Regex.
+4. **Normalization:** Map unit string to canonical factor.
 5. **Validation:** Check constraints (e.g., pounds in a stone < 14).
 
-## Conversion Reference
+## Developer Note on Imports
 
-**Exact Conversion Factors used:**
+Because the library files use hyphens (e.g., `weight-normalizer.py`), they cannot be imported using standard Python `import` syntax.
 
-* **KG_TO_LB:** 2.2046226218
-* **ST_TO_LB:** 14.0
-* **JIN_TO_LB:** 1.10231131 (Chinese jin, 500g)
-* **KAN_TO_LB:** 8.267328 (Japanese kan, 3.75kg)
-* **ARROBA_TO_LB:** 25.35316 (Spanish/Latin American)
-* **CM_TO_INCH:** 0.3937007874
+To use these libraries in your own scripts, use `importlib`:
 
-## Technical Highlights
+```python
+import importlib.util
 
-For resume/portfolio presentations:
+spec = importlib.util.spec_from_file_location("weight_lib", "weight-normalizer.py")
+weight_lib = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(weight_lib)
 
-* **Regex Engineering:** Complex pattern matching for composite units.
-* **Data Normalization:** Handles real-world messy clinical data.
-* **Type Safety:** Full Python type hints.
-* **International Standards:** Uses exact WHO/ISO conversion factors.
-* **Error Handling:** Comprehensive validation and informative errors.
+# Usage
+print(weight_lib.parse_weight_to_lbs("70kg"))
+
+```
 
 ## License
 
-MIT License - feel free to use in your projects.
-
-## Contact
-
-For questions or suggestions, please open an issue or contact the maintainer.
-Built for production use in healthcare informatics and clinical research.
+MIT License. Built for production use in healthcare informatics and clinical research.
 
 ```
 
