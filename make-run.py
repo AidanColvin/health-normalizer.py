@@ -23,8 +23,8 @@ def load_library(module_name, file_path):
         print(f"[CRITICAL] Missing file: {file_path}")
         sys.exit(1)
 
-weight_lib = load_library("weight_normalizer", "weight-normalizer.py")
-height_lib = load_library("height_normalizer", "height-normalizer.py")
+weight_lib = load_library("weight-normalizer", "weight-normalizer.py")
+height_lib = load_library("height-normalizer", "height-normalizer.py")
 
 # --- TEST CLASSES ---
 
